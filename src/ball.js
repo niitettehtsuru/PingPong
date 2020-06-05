@@ -6,8 +6,8 @@ class Ball
         this.id = ~~((Math.random() * 100000000) + 1);
         this.screenWidth = screenWidth;//width of browser window screen
         this.screenHeight = screenHeight;//height of browser window screen 
-        this.radius = 2;  
-        this.color  = 'white'; 
+        this.radius = 4;  
+        this.color  = 'black'; 
         this.position = {x:this.screenWidth/2,y:this.screenHeight/2};//the center of the screen
         this.maxSpeed = 10; 
         this.speed = {x: Math.random() > 0.5? 2:-2 ,y:Math.random() > 0.5? 2:-2};   
@@ -39,77 +39,77 @@ class Ball
         let ballDestination = {team:'left',time:0,pointOfContact:{x:0,y:0}};
         if(this.speed.x > 0 && this.speed.y > 0)//if ball is headed downwards to the right
         {   
-            let dy = this.screenHeight - this.position.y - 20;//vertical distance of ball to the top of the bottom paddle
-            let dx = this.screenWidth - this.position.x -20;//horizontal distance of ball to the top of the right paddle
+            let dy = this.screenHeight - this.position.y - PADDLE_SIZE_MIN;//vertical distance of ball to the top of the bottom paddle
+            let dx = this.screenWidth - this.position.x -PADDLE_SIZE_MIN;//horizontal distance of ball to the top of the right paddle
             let timeToTouchBottom = dy/this.speed.y; 
             let timeToTouchRight  = dx/this.speed.x;  
             if(timeToTouchBottom < timeToTouchRight)//if it will touch the bottom paddle first
             { 
                 let x = this.position.x + timeToTouchBottom * this.speed.x;//x coordinate at which ball will touch the bottom 
-                let pointOfContact = {x:x,y:this.screenHeight-20}; 
+                let pointOfContact = {x:x,y:this.screenHeight-PADDLE_SIZE_MIN}; 
                 ballDestination = {team:'bottom',time:timeToTouchBottom,pointOfContact:pointOfContact}; 
             }
             else //if it will touch the right paddle first 
             {
                 let y = this.position.y + timeToTouchRight * this.speed.y;//y coordinate at which ball will touch the right wall
-                let pointOfContact = {x:this.screenWidth -20,y:y}; 
+                let pointOfContact = {x:this.screenWidth -PADDLE_SIZE_MIN,y:y}; 
                 ballDestination = {team:'right',time:timeToTouchRight,pointOfContact:pointOfContact}; 
             }  
         }
         else if(this.speed.x < 0 && this.speed.y > 0)//if ball is headed downwards to the left
         {  
-            let dy = this.screenHeight - this.position.y - 20;//vertical distance of ball to the top of the bottom paddle
-            let dx = this.position.x - 20;//horizontal distance of ball to the top of the left paddle
+            let dy = this.screenHeight - this.position.y - PADDLE_SIZE_MIN;//vertical distance of ball to the top of the bottom paddle
+            let dx = this.position.x - PADDLE_SIZE_MIN;//horizontal distance of ball to the top of the left paddle
             let timeToTouchBottom = dy/this.speed.y; 
             let timeToTouchLeft  = Math.abs(dx/this.speed.x); 
             if(timeToTouchBottom < timeToTouchLeft)//if it will touch the bottom paddle first
             {
                 let x = this.position.x - timeToTouchBottom * Math.abs(this.speed.x);//x coordinate at which ball will touch the bottom 
-                let pointOfContact = {x:x,y:this.screenHeight-20};  
+                let pointOfContact = {x:x,y:this.screenHeight-PADDLE_SIZE_MIN};  
                 ballDestination = {team:'bottom',time:timeToTouchBottom,pointOfContact:pointOfContact}; 
             }
             else//if it will touch the left paddle first 
             {
                 let y = this.position.y + timeToTouchLeft * this.speed.y;//y coordinate at which ball will touch the left wall
-                let pointOfContact = {x:20,y:y}; 
+                let pointOfContact = {x:PADDLE_SIZE_MIN,y:y}; 
                 ballDestination = {team:'left',time:timeToTouchLeft,pointOfContact:pointOfContact}; 
             } 
         }
         else if(this.speed.x > 0 && this.speed.y < 0)//if ball is headed upwards to the right
         { 
-            let dy = this.position.y - 20;//vertical distance of ball to the bottom of the top paddle
-            let dx = this.screenWidth - this.position.x - 20;//horizontal distance of ball to the top of the right paddle
+            let dy = this.position.y - PADDLE_SIZE_MIN;//vertical distance of ball to the bottom of the top paddle
+            let dx = this.screenWidth - this.position.x - PADDLE_SIZE_MIN;//horizontal distance of ball to the top of the right paddle
             let timeToTouchTop = Math.abs(dy/this.speed.y); 
             let timeToTouchRight  = dx/this.speed.x; 
             if(timeToTouchTop < timeToTouchRight)//if it will touch the top paddle first
             {
                 let x = this.position.x + timeToTouchTop * this.speed.x;//x coordinate at which ball will touch the top 
-                let pointOfContact = {x:x,y:20};  
+                let pointOfContact = {x:x,y:PADDLE_SIZE_MIN};  
                 ballDestination = {team:'top',time:timeToTouchTop,pointOfContact:pointOfContact}; 
             }
             else//if it will touch the right paddle first 
             {
                 let y = this.position.y - timeToTouchRight * Math.abs(this.speed.y);//y coordinate at which ball will touch the right wall
-                let pointOfContact = {x:this.screenWidth - 20,y:y}; 
+                let pointOfContact = {x:this.screenWidth - PADDLE_SIZE_MIN,y:y}; 
                 ballDestination = {team:'right',time:timeToTouchRight,pointOfContact:pointOfContact}; 
             }  
         }
         else if(this.speed.x < 0 && this.speed.y < 0)//if ball is headed upwards to the left
         { 
-            let dy = this.position.y - 20;//vertical distance of ball to the bottom of the top paddle
-            let dx = this.position.x - 20;//horizontal distance of ball to the top of the left paddle
+            let dy = this.position.y - PADDLE_SIZE_MIN;//vertical distance of ball to the bottom of the top paddle
+            let dx = this.position.x - PADDLE_SIZE_MIN;//horizontal distance of ball to the top of the left paddle
             let timeToTouchTop  = Math.abs(dy/this.speed.y); 
             let timeToTouchLeft = Math.abs(dx/this.speed.x); 
             if(timeToTouchTop < timeToTouchLeft)//if it will touch the top paddle first
             {
                 let x = this.position.x - timeToTouchTop * Math.abs(this.speed.x);//x coordinate at which ball will touch the top 
-                let pointOfContact = {x:x,y:20};
+                let pointOfContact = {x:x,y:PADDLE_SIZE_MIN};
                 ballDestination = {team:'top',time:timeToTouchTop,pointOfContact:pointOfContact}; 
             }
             else //if it will touch the right paddle first 
             {
                 let y = this.position.y - timeToTouchLeft * Math.abs(this.speed.y);//y coordinate at which ball will touch the left wall
-                let pointOfContact = {x:20,y:y}; 
+                let pointOfContact = {x:PADDLE_SIZE_MIN,y:y}; 
                 ballDestination = {team:'left',time:timeToTouchLeft,pointOfContact:pointOfContact}; 
             }
         }

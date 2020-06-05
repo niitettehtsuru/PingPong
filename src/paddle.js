@@ -4,18 +4,25 @@ class Paddle
     {       
         this.screenWidth = screenWidth;//width of browser window screen
         this.screenHeight= screenHeight;//height of browser window screen  
-        this.width       = 150; 
-        this.height      = 20;
+        this.width       = PADDLE_SIZE_MAX; 
+        this.height      = PADDLE_SIZE_MIN;
         this.team        = team;//type of team, whether left, right, top or bottom
         this.setInitialWidthAndHeight(this.team); 
         this.position    = this.setCenterPosition(this.team); 
-        this.maxSpeed    = 10; 
-        //this.speed       = 0; 
+        this.maxSpeed    = 10;  
         this.speed       = this.setInitialSpeed(this.team);//{x: Math.random() > 0.5? 2:-2 ,y:Math.random() > 0.5? 2:-2};   
-        this.color       = 'maroon';    
+        this.color       = 'rgba(255,255,255,0.5)';    
         this.lockedOnTarget    = false; //true if paddle has a ball target, false otherwise
         this.lockedBall = new Ball(this.screenWidth,this.screenHeight);
-    }  
+    } 
+    isLocked() 
+    {
+        return this.lockedOnTarget;
+    }
+    getLockedBallId() 
+    {
+        return this.lockedBall.getId(); 
+    }
     getPaddleData() 
     {
         return {x:this.position.x,y:this.position.y,width:this.width,height:this.height};
@@ -46,13 +53,13 @@ class Paddle
         {
             case 'left'://if paddle is on the left or right wall  
             case 'right': 
-                this.width  = 20; 
-                this.height = 150;
+                this.width  = PADDLE_SIZE_MIN; 
+                this.height = PADDLE_SIZE_MAX;
                 break; 
             case 'top'://if paddle is on the top or bottom wall  
             case 'bottom': 
-                this.width  = 150; 
-                this.height = 20; 
+                this.width  = PADDLE_SIZE_MAX; 
+                this.height = PADDLE_SIZE_MIN; 
                 break; 
         }
     }
@@ -91,16 +98,16 @@ class Paddle
         //adjust the height
         position.y *= dy; 
         this.height*=dy;
-        if(this.height > 150)
+        if(this.height > PADDLE_SIZE_MAX)
         {
-            this.height = 150; 
+            this.height = PADDLE_SIZE_MAX; 
         }
         //adjust the width
         position.x *= dx;
         this.width*=dx;
-        if(this.width > 150)
+        if(this.width > PADDLE_SIZE_MAX)
         {
-            this.width = 150; 
+            this.width = PADDLE_SIZE_MAX; 
         }  
          
         /*
@@ -242,10 +249,21 @@ class Paddle
         }
         return timeToCatchBall; 
     }
-    
-    //shift paddle to receive ball in the middle, estimate if it is  possible to catch the ball at the current speed.
-            
-    update(deltaTime,balls)
+    ballIsLockedByAnotherPaddle(paddles,ball) 
+    {
+        let result = false; 
+        paddles.some(function(paddle)
+        {
+            if(paddle.isLocked() && paddle.getLockedBallId() === ball.getId())
+            {
+                result = true; 
+            }
+            return paddle.isLocked() && paddle.getLockedBallId() === ball.getId();
+        });
+        return result; 
+    }
+    //if paddle is not locked on target, the paddle should look for balls. However, the ball the paddle is looking for must not be locked by other paddles
+    update(deltaTime,balls,paddles)
     {    
         if(!this.lockedOnTarget)//if paddle is not locked on a ball,seek a ball to lock
         {
@@ -260,14 +278,17 @@ class Paddle
                 for(let i = 0; i < qualifiedBalls.length; i++)
                 {
                     let qualifiedBall = qualifiedBalls[i];
-                    let eta = qualifiedBall.getDestination().time;//estimated time of arrival 
-                    let timeToCatchBall = this.getTimeToCatchBall(qualifiedBall);
-                    if(eta < fastestTime && timeToCatchBall <= eta/*if the ball can be caught*/)
+                    if(!this.ballIsLockedByAnotherPaddle(paddles,qualifiedBall) )
                     {
-                        fastestTime = eta; 
-                        this.lockedBall = qualifiedBall;  
-                        this.lockedOnTarget = true;
-                    } 
+                        let eta = qualifiedBall.getDestination().time;//estimated time of arrival 
+                        let timeToCatchBall = this.getTimeToCatchBall(qualifiedBall);
+                        if(eta < fastestTime && timeToCatchBall <= eta/*if the ball can be caught*/)
+                        {
+                            fastestTime = eta; 
+                            this.lockedBall = qualifiedBall;  
+                            this.lockedOnTarget = true;
+                        } 
+                    }  
                 }
                 /*
                 let lockedBall = qualifiedBalls.reduce(function(a, e, i) 
@@ -470,7 +491,9 @@ class Paddle
             for(let i = 0; i < balls.length; i++)
             { 
                 let newBall = balls[i];
-                if(newBall.getDestination().team === this.team && newBall.getId() !== this.lockedBall.getId())
+                if(newBall.getDestination().team === this.team && 
+                        newBall.getId() !== this.lockedBall.getId() && 
+                    !this.ballIsLockedByAnotherPaddle(paddles,newBall))
                 {  
                     let newBallEta = newBall.getDestination().time;//estimated time of arrival 
                     let timeToCatchNewBall = this.getTimeToCatchBall(newBall); 

@@ -34,8 +34,10 @@ c.height= browserWindowSize.y;//height of canvas
 function createPaddles() 
 {
     let paddles = [];  
-    teams.forEach(function(team)//create a paddle for each team
-    {
+    teams.forEach(function(team)//create 2 paddles for each team
+    {  
+        paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
+        paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
         paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
     }); 
     return paddles;  
@@ -59,6 +61,34 @@ lastTime = 100,
 pingPongObjects = [...paddles,...balls], 
 windowSize; 
  
+function drawLawnMarkings() 
+{
+    //draw horizontal line
+    let p1 = {x:0,y:SCREEN_HEIGHT/2}; 
+    let p2 = {x:SCREEN_WIDTH,y:SCREEN_HEIGHT/2};  
+    ctx.beginPath(); 
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 0.3; 
+    ctx.moveTo(p1.x,p1.y);
+    ctx.lineTo(p2.x,p2.y); 
+    ctx.stroke(); 
+    ctx.closePath(); 
+    //draw vertical line
+    p1 = {x:SCREEN_WIDTH/2,y:0}; 
+    p2 = {x:SCREEN_WIDTH/2,y:SCREEN_HEIGHT};  
+    ctx.beginPath(); 
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 0.3; 
+    ctx.moveTo(p1.x,p1.y);
+    ctx.lineTo(p2.x,p2.y); 
+    ctx.stroke(); 
+    ctx.closePath(); 
+    //draw rectangle to mark center 
+    ctx.beginPath();
+    ctx.rect(SCREEN_WIDTH/2-5,SCREEN_HEIGHT/2-5,10,10);  
+    ctx.fillStyle   = 'rgba(255,255,255,0.7)';
+    ctx.fill();
+}
 function onWindowResize()//called every time the window gets resized. 
 {  
     windowSize     = getBrowserWindowSize();
@@ -70,19 +100,18 @@ function onWindowResize()//called every time the window gets resized.
     {     
         obj.resize(SCREEN_HEIGHT,SCREEN_WIDTH); 
     }); 
-} 
-
-window.addEventListener('resize',onWindowResize); 
-
+}  
+window.addEventListener('resize',onWindowResize);  
 function animationLoop(timestamp)
 {      
-    ctx.clearRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);  
+    ctx.clearRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+    drawLawnMarkings();
     //update paddles and balls 
     let deltaTime = timestamp - lastTime; 
         lastTime = timestamp;  
     paddles.forEach(function (paddle) 
     {    
-        paddle.update(deltaTime,balls); 
+        paddle.update(deltaTime,balls,paddles); 
     });  
     balls.forEach(function (ball) 
     {        
