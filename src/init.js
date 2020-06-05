@@ -5,7 +5,7 @@
  * @date:      2nd June, 2020 
  * @email:     calebniitettehaddy@gmail.com 
  * @twitter:   @cnttaddy
- * @github :   https://github.com/niitettehtsuru/SocialDistancing
+ * @github :   https://github.com/niitettehtsuru/PingPong
  * @codepen:   https://codepen.io/niitettehtsuru/pen/NWqENww
  * @license:   GNU General Public License v3.0
  */  
@@ -35,20 +35,9 @@ function createPaddles()
 {
     let paddles = [];  
     teams.forEach(function(team)      
-    {   
-        if(team === 'top' || team === 'bottom')
-        {
-            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
-            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
-            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));
-            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));
-        } 
-        else
-        {
-            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
-            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));    
-        }
-            
+    {   //create 2 paddles for each team
+        paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
+        paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team)); 
     }); 
     return paddles;  
 }
@@ -65,13 +54,13 @@ let
 SCREEN_WIDTH  = browserWindowSize.x,
 SCREEN_HEIGHT = browserWindowSize.y, 
 paddles = createPaddles(),
-numOfBalls = 4,
+numOfBalls = 5,
 balls = createBalls(numOfBalls),
 lastTime = 100,
 pingPongObjects = [...paddles,...balls], 
 windowSize; 
  
-function drawLawnMarkings() 
+function drawBoardMarkings()//draw central lines on the ping pong board
 {
     //draw horizontal line
     let p1 = {x:0,y:SCREEN_HEIGHT/2}; 
@@ -93,7 +82,7 @@ function drawLawnMarkings()
     ctx.lineTo(p2.x,p2.y); 
     ctx.stroke(); 
     ctx.closePath(); 
-    //draw rectangle to mark center 
+    //draw small rectangle to mark center 
     ctx.beginPath();
     ctx.rect(SCREEN_WIDTH/2-5,SCREEN_HEIGHT/2-5,10,10);  
     ctx.fillStyle   = 'rgba(255,255,255,0.7)';
@@ -115,7 +104,7 @@ window.addEventListener('resize',onWindowResize);
 function animationLoop(timestamp)
 {      
     ctx.clearRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
-    drawLawnMarkings();
+    drawBoardMarkings();
     //update paddles and balls 
     let deltaTime = timestamp - lastTime; 
         lastTime = timestamp;  
