@@ -1,4 +1,4 @@
-#Ping pong
+# Ping pong
 A 4-way Ping pong animation
  
 ## Getting Started

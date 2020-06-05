@@ -31,11 +31,11 @@ class Paddle
         {
             case 'left'://if paddle is on the left or right wall  
             case 'right': 
-                speed = {x:0,y:2};//it will move only vertically 
+                speed = {x:0,y:3};//it will move only vertically 
                 break; 
             case 'top'://if paddle is on the top or bottom wall  
             case 'bottom':
-                speed = {x:2,y:0};//it will move only horizontally
+                speed = {x:3,y:0};//it will move only horizontally
                 break; 
         }
         return speed; 
@@ -242,6 +242,9 @@ class Paddle
         }
         return timeToCatchBall; 
     }
+    
+    //shift paddle to receive ball in the middle, estimate if it is  possible to catch the ball at the current speed.
+            
     update(deltaTime,balls)
     {    
         if(!this.lockedOnTarget)//if paddle is not locked on a ball,seek a ball to lock
@@ -291,13 +294,28 @@ class Paddle
         if(this.lockedOnTarget)//if paddle is locked on a ball,move paddle to receive the ball
         {
             let pointOfContact = this.lockedBall.getDestination().pointOfContact; 
-            switch(this.team)
+            switch(this.team)//move paddle to receive the ball
             {
                 case 'left':
                     //if paddle is positioned to receive the ball
                     if(this.position.y <  pointOfContact.y && this.position.y + this.height > pointOfContact.y)
-                    {
-                        //shift to paddle to receive the ball in the middle
+                    { 
+                        if
+                        (
+                            this.position.y + this.height/2 < pointOfContact.y && //if the center of the paddle is above the point of contact
+                            this.position.y + this.height < this.screenHeight//and bottom of paddle is not beyond the bottom of the canvas
+                        )
+                        {
+                            this.position.y += this.speed.y;//move the paddle down 
+                        }  
+                        if
+                        (
+                            this.position.y + this.height/2 > pointOfContact.y && //if the center of the paddle is below the point of contact
+                            this.position.y > 0 //and the top of paddle is NOT beyond the top of the canvas
+                        )
+                        {
+                            this.position.y -= this.speed.y;//move the paddle up 
+                        } 
                     }
                     else //if paddle is NOT positioned to receive the ball
                     {
@@ -325,7 +343,22 @@ class Paddle
                     //if paddle is positioned to receive the ball
                     if(this.position.y <  pointOfContact.y && this.position.y + this.height > pointOfContact.y)
                     {
-                        //shift to paddle to receive the ball in the middle
+                        if
+                        (
+                            this.position.y + this.height/2 < pointOfContact.y && //if the center of the paddle is above the point of contact
+                            this.position.y + this.height < this.screenHeight//and bottom of paddle is not beyond the bottom of the canvas
+                        )
+                        {
+                            this.position.y += this.speed.y;//move the paddle down 
+                        }  
+                        if
+                        (
+                            this.position.y + this.height/2 > pointOfContact.y && //if the center of the paddle is below the point of contact
+                            this.position.y > 0 //and the top of paddle is NOT beyond the top of the canvas
+                        )
+                        {
+                            this.position.y -= this.speed.y;//move the paddle up 
+                        } 
                     }
                     else 
                     {
@@ -352,8 +385,23 @@ class Paddle
                 case 'top':
                     //if paddle is positioned to receive the ball
                     if(this.position.x <  pointOfContact.x && this.position.x + this.width > pointOfContact.x)
-                    {
-                        //shift to paddle to receive the ball in the middle
+                    { 
+                        if
+                        (
+                            this.position.x + this.width/2 < pointOfContact.x && //if the center of the paddle is to the left of the ball,
+                            this.position.x + this.width < this.screenWidth//and the right edge of paddle is NOT beyond the right edge of the canvas
+                        ) 
+                        {
+                            this.position.x += this.speed.x;//move the paddle to the right       
+                        }  
+                        if
+                        (
+                            this.position.x + this.width/2 > pointOfContact.x && //if the center of the paddle is to the right of the ball,
+                            this.position.x > 0//and the left edge of paddle is NOT beyond the left edge of the canvas
+                        ) 
+                        {
+                            this.position.x -= this.speed.x;//move the paddle to the left       
+                        } 
                     }
                     else 
                     { 
@@ -379,7 +427,22 @@ class Paddle
                     //if paddle is positioned to receive the ball
                     if(this.position.x <  pointOfContact.x && this.position.x + this.width > pointOfContact.x)
                     {
-                        //shift to paddle to receive the ball in the middle
+                        if
+                        (
+                            this.position.x + this.width/2 < pointOfContact.x && //if the center of the paddle is to the left of the ball,
+                            this.position.x + this.width < this.screenWidth//and the right edge of paddle is NOT beyond the right edge of the canvas
+                        ) 
+                        {
+                            this.position.x += this.speed.x;//move the paddle to the right       
+                        }  
+                        if
+                        (
+                            this.position.x + this.width/2 > pointOfContact.x && //if the center of the paddle is to the right of the ball,
+                            this.position.x > 0//and the left edge of paddle is NOT beyond the left edge of the canvas
+                        ) 
+                        {
+                            this.position.x -= this.speed.x;//move the paddle to the left       
+                        } 
                     }
                     else 
                     { 
@@ -402,7 +465,26 @@ class Paddle
                     }
                     break;   
             } 
-            //shift paddle to receive ball in the middle, estimate if it is  possible to catch the ball at the current speed.
+            
+            //check if there's another ball with a faster eta that can be caught 
+            for(let i = 0; i < balls.length; i++)
+            { 
+                let newBall = balls[i];
+                if(newBall.getDestination().team === this.team && newBall.getId() !== this.lockedBall.getId())
+                {  
+                    let newBallEta = newBall.getDestination().time;//estimated time of arrival 
+                    let timeToCatchNewBall = this.getTimeToCatchBall(newBall); 
+                    let lockedBallEta = this.lockedBall.getDestination().time;//estimated time of arrival 
+                    let timeToCatchLockedBall = this.getTimeToCatchBall(this.lockedBall);
+                    if(timeToCatchNewBall <= newBallEta/*if the new ball can be caught*/ && newBallEta < lockedBallEta/*new ball will hit the paddle before the locked ball*/)
+                    
+                    //if(timeToCatchNewBall <= newBallEta/*if the new ball can be caught*/ && timeToCatchNewBall < timeToCatchLockedBall/*new ball will hit the paddle before the locked ball*/)
+                    { 
+                        this.lockedBall = newBall;  
+                        this.lockedOnTarget = true;
+                    }
+                }  
+            }
             
             //update locked ball
             let lockedBallId = this.lockedBall.getId();
@@ -418,14 +500,7 @@ class Paddle
                 {
                     this.lockedOnTarget = false;  
                 } 
-            }
-            
-            /*
-            this.lockedBall = balls.filter(function (ball)
-            {
-                return ball.getId() === lockedBallId;
-            })[0]; 
-            */
+            }  
             //if the locked ball touches the paddle or the wall of the canvas(the one the paddle is on), release the lock
             //console.log(this.lockedBall.getBallData().radius);
             if(this.ballTouchedPaddle(this.lockedBall.getBallData()) || this.ballTouchesWall(this.lockedBall.getBallData()))

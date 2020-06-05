@@ -161,22 +161,7 @@ class Ball
                 //slightly change the angle of movement in the current direction
                 this.speed.x += Math.random() > 0.5? Math.random() : -Math.random(); 
                 this.speed.y += Math.random() > 0.5? Math.random() : -Math.random(); 
-                if(this.speed.x > 2.5)
-                {
-                    this.speed.x = 2.5;
-                }
-                if(this.speed.x < -2.5)
-                {
-                    this.speed.x = -2.5;
-                }
-                if(this.speed.y > 2.5)
-                {
-                    this.speed.y = 2.5;
-                }
-                if(this.speed.y < -2.5)
-                {
-                    this.speed.y = -2.5;
-                }
+                this.adjustSpeed();
                 break; //ball can't collide with more than 1 paddle at a time
             }
         } 
@@ -200,6 +185,54 @@ class Ball
         } 
         this.destination = this.getBallDestination();
     }  
+    adjustSpeed() 
+    {
+        if(this.speed.x > 0)
+        {
+            if(this.speed.x > 2.5)
+            {
+                this.speed.x = 2.5;
+            }
+            if(this.speed.x < 1.5)
+            {
+                this.speed.x = 1.5;
+            }
+        }
+        if(this.speed.x < 0)
+        {
+            if(this.speed.x < -2.5)
+            {
+                this.speed.x = -2.5;
+            } 
+            if(this.speed.x > -1.5)
+            {
+                this.speed.x = -1.5;
+            }
+        }
+        
+        if(this.speed.y > 0)
+        {
+            if(this.speed.y > 2.5)
+            {
+                this.speed.y = 2.5;
+            }
+            if(this.speed.y < 1.5)
+            {
+                this.speed.y = 1.5;
+            }
+        }
+        if(this.speed.y < 0)
+        {
+            if(this.speed.y < -2.5)
+            {
+                this.speed.y = -2.5;
+            } 
+            if(this.speed.y > -1.5)
+            {
+                this.speed.y = -1.5;
+            }
+        } 
+    }
     collisionDetected(paddle)//ball has collided with paddle
     { 
         //Find the vertical & horizontal (distX/distY) distances between the ball’s center and the paddle’s center
