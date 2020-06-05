@@ -12,7 +12,11 @@ class Ball
         this.unitSpeed = 5;  
         this.speed = {x: Math.random() > 0.5? this.unitSpeed:-this.unitSpeed ,y:Math.random() > 0.5? this.unitSpeed:-this.unitSpeed};   
         this.destination = this.getBallDestination();//where the ball is headed, either to the right, left, top or bottom wall
-    }  
+        this.leftPaddleIsHit = false; 
+        this.rightPaddleIsHit = false; 
+        this.topPaddleIsHit = false; 
+        this.bottomPaddleIsHit = false; 
+    }   
     draw(ctx)
     {
         ctx.beginPath(); 
@@ -126,6 +130,27 @@ class Ball
     }
     update(deltaTime,paddles)
     {   
+        if(this.leftPaddleIsHit)
+        {
+            this.position.x = this.radius + PADDLE_SIZE_MIN+1 ; //move slightly away from left paddle
+        }
+        if(this.rightPaddleIsHit)
+        {
+            this.position.x = this.screenWidth - PADDLE_SIZE_MIN -1 - this.radius; //move slightly away from right paddle
+        }
+        if(this.topPaddleIsHit)
+        {
+            this.position.y = this.radius + PADDLE_SIZE_MIN+1; //move slightly away from the top paddle
+        }
+        if(this.bottomPaddleIsHit)
+        {
+            this.position.y = this.screenHeight - PADDLE_SIZE_MIN- 1 - this.radius; //move slightly away from the top paddle
+        }
+        //reset
+        this.leftPaddleIsHit = false; 
+        this.rightPaddleIsHit = false; 
+        this.topPaddleIsHit = false; 
+        this.bottomPaddleIsHit = false; 
         //keep the ball moving in its current direction  
         this.position.x += this.speed.x; 
         this.position.y += this.speed.y; 
@@ -142,22 +167,23 @@ class Ball
                     case 'left':
                         this.speed.x = -this.speed.x;//move in the opposite horizontal direction 
                         this.speed.y = Math.random() > 0.5? -this.speed.y: this.speed.y ;//flip a coin to move either up or down 
-                        //this.position.x = 25; //move slightly away from left paddle
+                        this.leftPaddleIsHit = true;  
                         break; 
                     case 'right': 
                         this.speed.x = -this.speed.x;//move in the opposite horizontal direction 
                         this.speed.y = Math.random() > 0.5? -this.speed.y: this.speed.y ;//flip a coin to move either up or down 
-                        //this.position.x = this.screenWidth - 25; //move slightly away from right paddle
+                        this.rightPaddleIsHit = true;  
                         break; 
                     case 'top': 
                         this.speed.y = -this.speed.y;//move in the opposite vertical direction 
                         this.speed.x = Math.random() > 0.5? -this.speed.x: this.speed.x ;//flip a coin to move either left or right 
-                        //this.position.y = 25; //move slightly away from top paddle
+                        this.topPaddleIsHit = true; 
+                        
                         break; 
                     case 'bottom':
                         this.speed.y = -this.speed.y;//move in the opposite vertical direction 
                         this.speed.x = Math.random() > 0.5? -this.speed.x: this.speed.x ;//flip a coin to move either left or right 
-                        //this.position.y = this.screenHeight - 25; //move slightly away from bottom paddle
+                        this.bottomPaddleIsHit = true; 
                         break; 
                 } 
                 //slightly change the angle of movement in the current direction
@@ -176,8 +202,7 @@ class Ball
                 let score  = +`${document.getElementById('leftTeam').innerHTML}` ; 
                 document.getElementById('leftTeam').innerHTML =`${score+1}`;  
                 this.speed.x = -this.speed.x;//move in the opposite horizontal direction 
-                this.speed.y = Math.random() > 0.5? -this.speed.y: this.speed.y ;//flip a coin to move either up or down 
-                 
+                this.speed.y = Math.random() > 0.5? -this.speed.y: this.speed.y ;//flip a coin to move either up or down   
             }    
             if//ball touches the right wall
             (this.position.x + this.radius> this.screenWidth)

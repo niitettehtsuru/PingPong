@@ -435,7 +435,7 @@ class Paddle
                     break;   
             } 
             
-            //check if there's another ball with a faster eta that can be caught 
+            //check if there's another ball with a faster eta(estimated time of arrival) that can be caught 
             for(let i = 0; i < balls.length; i++)
             { 
                 let newBall = balls[i];
@@ -482,14 +482,14 @@ class Paddle
         }  
     }
     ballTouchedPaddle(ball)//ball has collided with paddle
-    {   
+    {                                                             
         //Find the vertical & horizontal (distX/distY) distances between the ball’s center and the paddle’s center
         let distX = Math.abs(ball.x - this.position.x - this.width/2);
         let distY = Math.abs(ball.y - this.position.y - this.height/2); 
         //If the distance is greater than halfCircle + halfRect, then they are too far apart to be colliding
         if (distX > (this.width/2 + ball.radius)) 
         { 
-            return false; 
+            return  false; 
         }
         if (distY > (this.height/2 + ball.radius)) 
         { 
@@ -511,10 +511,10 @@ class Paddle
         //Using Pythagoras formula to compare the distance between ball and paddle centers.
         let dx=distX-this.width/2;
         let dy=distY-this.height/2;
-        return (dx*dx+dy*dy<=(ball.radius*ball.radius)); 
+        return (dx*dx+dy*dy<=(ball.radius*ball.radius));  
     }
     ballTouchesWall(ball)
-    {   
+    {    
         switch(this.team)
         {
             case 'left'://if paddle is on the left wall  
