@@ -38,11 +38,11 @@ class Paddle
         {
             case 'left'://if paddle is on the left or right wall  
             case 'right': 
-                speed = {x:0,y:3};//it will move only vertically 
+                speed = {x:0,y:7};//it will move only vertically 
                 break; 
             case 'top'://if paddle is on the top or bottom wall  
             case 'bottom':
-                speed = {x:3,y:0};//it will move only horizontally
+                speed = {x:7,y:0};//it will move only horizontally
                 break; 
         }
         return speed; 
@@ -89,73 +89,20 @@ class Paddle
     } 
     resize(screenHeight,screenWidth)
     { 
-        let dy              = screenHeight/this.screenHeight;//percentage change in browser window height 
-        let dx              = screenWidth/this.screenWidth;//percentage change in browser window width  
-        this.screenHeight   = screenHeight;  
-        this.screenWidth    = screenWidth; 
-        let position = this.position;
-         
-        //adjust the height
-        position.y *= dy; 
-        this.height*=dy;
-        if(this.height > PADDLE_SIZE_MAX)
+        let dy = screenHeight/this.screenHeight;//percentage change in browser window height 
+        let dx = screenWidth/this.screenWidth;//percentage change in browser window width  
+        this.screenHeight = screenHeight;  
+        this.screenWidth  = screenWidth; 
+        this.position.y *= dy;
+        this.position.x *= dx;
+        if(this.team === 'bottom')
         {
-            this.height = PADDLE_SIZE_MAX; 
+            this.position.y = this.screenHeight - PADDLE_SIZE_MIN; 
         }
-        //adjust the width
-        position.x *= dx;
-        this.width*=dx;
-        if(this.width > PADDLE_SIZE_MAX)
+        if(this.team === 'right')
         {
-            this.width = PADDLE_SIZE_MAX; 
-        }  
-         
-        /*
-        switch(this.team)
-        {
-            case 'left': 
-                position.x = 0;//at the very left of the screen
-                //adjust the height
-                position.y *= dy; 
-                this.height*=dy;
-                if(this.height > 150)
-                {
-                    this.height = 150; 
-                }
-                break; 
-            case 'right': 
-                position.x = this.screenWidth - this.width;//at the very right of the screen 
-                //adjust the height
-                position.y *= dy; 
-                this.height*=dy;
-                if(this.height > 150)
-                {
-                    this.height = 150; 
-                }
-                break; 
-            case 'top': 
-                //adjust the width
-                position.x *= dx;
-                this.width*=dx;
-                if(this.width > 150)
-                {
-                    this.width = 150; 
-                } 
-                position.y = 0;//at the very top of the screen
-                break; 
-            case 'bottom':  
-                //adjust the width
-                position.x *= dx;
-                this.width*=dx;
-                if(this.width > 150)
-                {
-                    this.width = 150; 
-                } 
-                position.y = this.screenHeight - this.height;//at the very bottom of the screen
-                break; 
+            this.position.x = this.screenWidth - PADDLE_SIZE_MIN; 
         }
-        */
-        this.position = position;  
     }
     draw(ctx)
     {
@@ -252,9 +199,10 @@ class Paddle
     ballIsLockedByAnotherPaddle(paddles,ball) 
     {
         let result = false; 
+        let team = this.team; 
         paddles.some(function(paddle)
         {
-            if(paddle.isLocked() && paddle.getLockedBallId() === ball.getId())
+            if(paddle.isLocked() && paddle.getLockedBallId() === ball.getId() && paddle.getTeam() === team)
             {
                 result = true; 
             }
@@ -572,24 +520,32 @@ class Paddle
             case 'left'://if paddle is on the left wall  
                 if(ball.x - ball.radius < 0)//if ball touches the left wall
                 {
+                    let score  = +`${document.getElementById('leftTeam').innerHTML}` ; 
+                    document.getElementById('leftTeam').innerHTML =`${score+1}`;  
                     return true; 
                 }
                 break; 
             case 'right'://if paddle is on the right wall  
                 if(ball.x + ball.radius > this.screenWidth)//if ball touches the right wall
                 {
+                    let score  = +`${document.getElementById('rightTeam').innerHTML}` ; 
+                    document.getElementById('rightTeam').innerHTML =`${score+1}`;
                     return true; 
                 }
                 break; 
             case 'top'://if paddle is on the top wall  
                 if(ball.y - ball.radius < 0)//if ball touches the top of the wall
                 {
+                    let score  = +`${document.getElementById('topTeam').innerHTML}` ; 
+                    document.getElementById('topTeam').innerHTML =`${score+1}`;
                     return true; 
                 }
                 break; 
             case 'bottom'://if paddle is on the bottom wall  
                 if(ball.y + ball.radius > this.screenHeight)//if ball touches the bottom of the wall
-                {
+                { 
+                    let score  = +`${document.getElementById('bottomTeam').innerHTML}` ; 
+                    document.getElementById('bottomTeam').innerHTML =`${score+1}`;
                     return true; 
                 }
                 break; 

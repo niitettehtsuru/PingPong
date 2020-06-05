@@ -6,11 +6,11 @@ class Ball
         this.id = ~~((Math.random() * 100000000) + 1);
         this.screenWidth = screenWidth;//width of browser window screen
         this.screenHeight = screenHeight;//height of browser window screen 
-        this.radius = 4;  
+        this.radius = 5;  
         this.color  = 'black'; 
         this.position = {x:this.screenWidth/2,y:this.screenHeight/2};//the center of the screen
-        this.maxSpeed = 10; 
-        this.speed = {x: Math.random() > 0.5? 2:-2 ,y:Math.random() > 0.5? 2:-2};   
+        this.unitSpeed = 5;  
+        this.speed = {x: Math.random() > 0.5? this.unitSpeed:-this.unitSpeed ,y:Math.random() > 0.5? this.unitSpeed:-this.unitSpeed};   
         this.destination = this.getBallDestination();//where the ball is headed, either to the right, left, top or bottom wall
     }  
     draw(ctx)
@@ -117,10 +117,12 @@ class Ball
     } 
     resize(screenHeight,screenWidth)
     { 
-        let dy              = screenHeight/this.screenHeight;//percentage change in browser window height 
-        let dx              = screenWidth/this.screenWidth;//percentage change in browser window width  
-        this.screenHeight   = screenHeight;  
-        this.screenWidth    = screenWidth; 
+        let dy = screenHeight/this.screenHeight;//percentage change in browser window height 
+        let dx = screenWidth/this.screenWidth;//percentage change in browser window width  
+        this.screenHeight = screenHeight;  
+        this.screenWidth  = screenWidth; 
+        this.position.y *= dy;
+        this.position.x *= dx; 
     }
     update(deltaTime,paddles)
     {   
@@ -168,20 +170,40 @@ class Ball
         if(!collidedWithPaddle)//if there's no collision with the paddle
         {
            //check collision with wall
-            if//ball touches the left wall or ball touches the right wall
-            (this.position.x - this.radius < 0 || this.position.x + this.radius> this.screenWidth)
+            if//ball touches the left wall 
+            (this.position.x - this.radius < 0 )
             {
+                let score  = +`${document.getElementById('leftTeam').innerHTML}` ; 
+                document.getElementById('leftTeam').innerHTML =`${score+1}`;  
                 this.speed.x = -this.speed.x;//move in the opposite horizontal direction 
                 this.speed.y = Math.random() > 0.5? -this.speed.y: this.speed.y ;//flip a coin to move either up or down 
                  
             }    
-            if//ball touches the top of the wall or ball touches the bottom of the wall
-            (this.position.y - this.radius < 0 || this.position.y + this.radius > this.screenHeight) 
+            if//ball touches the right wall
+            (this.position.x + this.radius> this.screenWidth)
             {
-                this.speed.y = -this.speed.y;//move in the opposite vertical direction 
-                this.speed.x = Math.random() > 0.5? -this.speed.x: this.speed.x ;//flip a coin to move either left or right 
+                let score  = +`${document.getElementById('rightTeam').innerHTML}` ; 
+                document.getElementById('rightTeam').innerHTML =`${score+1}`;
+                this.speed.x = -this.speed.x;//move in the opposite horizontal direction 
+                this.speed.y = Math.random() > 0.5? -this.speed.y: this.speed.y ;//flip a coin to move either up or down 
                  
+            }    
+            if//ball touches the top of the wall 
+            (this.position.y - this.radius < 0 ) 
+            {
+                let score  = +`${document.getElementById('topTeam').innerHTML}` ; 
+                document.getElementById('topTeam').innerHTML =`${score+1}`;
+                this.speed.y = -this.speed.y;//move in the opposite vertical direction 
+                this.speed.x = Math.random() > 0.5? -this.speed.x: this.speed.x ;//flip a coin to move either left or right  
             }  
+            if//ball touches the bottom of the wall
+            (this.position.y + this.radius > this.screenHeight) 
+            {
+                let score  = +`${document.getElementById('bottomTeam').innerHTML}` ; 
+                document.getElementById('bottomTeam').innerHTML =`${score+1}`;
+                this.speed.y = -this.speed.y;//move in the opposite vertical direction 
+                this.speed.x = Math.random() > 0.5? -this.speed.x: this.speed.x ;//flip a coin to move either left or right  
+            } 
         } 
         this.destination = this.getBallDestination();
     }  
@@ -189,47 +211,47 @@ class Ball
     {
         if(this.speed.x > 0)
         {
-            if(this.speed.x > 2.5)
+            if(this.speed.x > this.unitSpeed + 0.5)
             {
-                this.speed.x = 2.5;
+                this.speed.x = this.unitSpeed + 0.5;
             }
-            if(this.speed.x < 1.5)
+            if(this.speed.x < this.unitSpeed - 1)
             {
-                this.speed.x = 1.5;
+                this.speed.x = this.unitSpeed - 1;
             }
         }
         if(this.speed.x < 0)
         {
-            if(this.speed.x < -2.5)
+            if(this.speed.x < -(this.unitSpeed + 0.5))
             {
-                this.speed.x = -2.5;
+                this.speed.x = -(this.unitSpeed + 0.5);
             } 
-            if(this.speed.x > -1.5)
+            if(this.speed.x > -this.unitSpeed + 1)
             {
-                this.speed.x = -1.5;
+                this.speed.x = -this.unitSpeed + 1;
             }
         }
         
         if(this.speed.y > 0)
         {
-            if(this.speed.y > 2.5)
+            if(this.speed.y > this.unitSpeed + 0.5)
             {
-                this.speed.y = 2.5;
+                this.speed.y = this.unitSpeed + 0.5;
             }
-            if(this.speed.y < 1.5)
+            if(this.speed.y < this.unitSpeed - 1)
             {
-                this.speed.y = 1.5;
+                this.speed.y = this.unitSpeed - 1;
             }
         }
         if(this.speed.y < 0)
         {
-            if(this.speed.y < -2.5)
+            if(this.speed.y < -(this.unitSpeed + 0.5))
             {
-                this.speed.y = -2.5;
+                this.speed.y = -(this.unitSpeed + 0.5);
             } 
-            if(this.speed.y > -1.5)
+            if(this.speed.y > -this.unitSpeed + 1)
             {
-                this.speed.y = -1.5;
+                this.speed.y = -this.unitSpeed + 1;
             }
         } 
     }

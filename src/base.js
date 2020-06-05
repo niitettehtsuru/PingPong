@@ -1,3 +1,3 @@
-const PADDLE_SIZE_MAX = 100; 
-const PADDLE_SIZE_MIN = 20; 
+const PADDLE_SIZE_MAX = 50; 
+const PADDLE_SIZE_MIN = 10; 
  

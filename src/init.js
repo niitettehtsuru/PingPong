@@ -8,7 +8,7 @@
  * @github :   https://github.com/niitettehtsuru/SocialDistancing
  * @codepen:   https://codepen.io/niitettehtsuru/pen/NWqENww
  * @license:   GNU General Public License v3.0
- */ 
+ */  
 let 
 c   = document.getElementById("pingPongCanvas"), 
 ctx = c.getContext("2d");   
@@ -34,11 +34,21 @@ c.height= browserWindowSize.y;//height of canvas
 function createPaddles() 
 {
     let paddles = [];  
-    teams.forEach(function(team)//create 2 paddles for each team
-    {  
-        paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
-        paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
-        paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
+    teams.forEach(function(team)      
+    {   
+        if(team === 'top' || team === 'bottom')
+        {
+            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
+            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
+            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));
+            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));
+        } 
+        else
+        {
+            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));  
+            paddles.push(new Paddle(SCREEN_WIDTH,SCREEN_HEIGHT,team));    
+        }
+            
     }); 
     return paddles;  
 }
@@ -55,7 +65,7 @@ let
 SCREEN_WIDTH  = browserWindowSize.x,
 SCREEN_HEIGHT = browserWindowSize.y, 
 paddles = createPaddles(),
-numOfBalls = 5,
+numOfBalls = 4,
 balls = createBalls(numOfBalls),
 lastTime = 100,
 pingPongObjects = [...paddles,...balls], 
