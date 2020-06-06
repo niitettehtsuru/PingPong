@@ -6,7 +6,7 @@
  * @email:     calebniitettehaddy@gmail.com 
  * @twitter:   @cnttaddy
  * @github :   https://github.com/niitettehtsuru/PingPong
- * @codepen:   https://codepen.io/niitettehtsuru/pen/NWqENww
+ * @codepen:   https://codepen.io/niitettehtsuru/pen/KKVpwoy
  * @license:   GNU General Public License v3.0
  */
 class Ball

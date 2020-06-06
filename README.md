@@ -1,5 +1,14 @@
 # Ping pong
 A 4-way Ping pong animation
+
+Description
+-----------
+A game of ping pong is played from two opposite sides. However, how will it be like if it is played from all 4 sides?
+This simulation sets 4 teams on each side of the ping pong board.  
+ 
+<img width="1357px" height="400px"  src ="img/img.png">
+
+View live demo at : https://codepen.io/niitettehtsuru/pen/KKVpwoy
  
 ## Getting Started
 

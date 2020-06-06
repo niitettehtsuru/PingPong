@@ -54,7 +54,7 @@ let
 SCREEN_WIDTH  = browserWindowSize.x,
 SCREEN_HEIGHT = browserWindowSize.y, 
 paddles = createPaddles(),
-numOfBalls = 5,
+numOfBalls = 4,
 balls = createBalls(numOfBalls),
 lastTime = 100,
 pingPongObjects = [...paddles,...balls], 
